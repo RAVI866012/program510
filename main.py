@@ -1,3 +1,112 @@
+#11111111
+# Module or library install command (run this in terminal before running the script)
+# pip install gensim scipy
+
+# Import required libraries
+import gensim.downloader as api  # For downloading pre-trained word vectors
+from scipy.spatial.distance import cosine  # For calculating cosine similarity
+
+# Load pre-trained Word2Vec model (Google News, 300 dimensions)
+print("Loading Word2Vec model...")
+model = api.load("word2vec-google-news-300")
+print("Model loaded successfully.\n")
+
+# Get and print the first 10 dimensions of the word vector for 'king'
+vector = model['king']
+print("First 10 dimensions of 'king' vector:")
+print(vector[:10], "\n")
+
+# Print top 10 most similar words to 'king'
+print("Top 10 words most similar to 'king':")
+for word, similarity in model.most_similar('king'):
+    print(f"{word}: {similarity:.4f}")
+print()
+
+# Perform word analogy: king - man + woman ≈ queen
+result = model.most_similar(positive=['king', 'woman'], negative=['man'], topn=1)
+print("Analogy - 'king' - 'man' + 'woman' ≈ ?")
+print(f"Result: {result[0][0]} (Similarity: {result[0][1]:.4f})\n")
+
+# Analogy: paris + italy - france ≈ rome
+print("Analogy - 'paris' + 'italy' - 'france' ≈ ?")
+for word, similarity in model.most_similar(positive=['paris', 'italy'], negative=['france']):
+    print(f"{word}: {similarity:.4f}")
+print()
+
+# Analogy: walking + swimming - walk ≈ swim
+print("Analogy - 'walking' + 'swimming' - 'walk' ≈ ?")
+for word, similarity in model.most_similar(positive=['walking', 'swimming'], negative=['walk']):
+    print(f"{word}: {similarity:.4f}")
+print()
+
+# Calculate cosine similarity between 'king' and 'queen'
+similarity = 1 - cosine(model['king'], model['queen'])
+print(f"Cosine similarity between 'king' and 'queen': {similarity:.4f}")
+
+
+
+
+
+
+
+
+
+#22222222
+# Module or library install command (run this in terminal before running the script)
+# pip install gensim matplotlib scikit-learn
+
+import gensim.downloader as api
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+
+# Load model
+model = api.load("word2vec-google-news-300")
+
+# Select 10 domain-specific words (technology domain)
+words = ['computer', 'internet', 'software', 'hardware', 'keyboard', 'mouse', 'server', 'network', 'programming', 'database']
+vectors = [model[word] for word in words]
+
+# Dimensionality reduction using PCA
+pca = PCA(n_components=2)
+reduced = pca.fit_transform(vectors)
+
+# Generate 5 semantically similar words for a given input
+input_word = 'computer'
+similar_words = model.most_similar(input_word, topn=5)
+
+# Print the similar words to terminal
+print(f"Top 5 words similar to '{input_word}':")
+for word, score in similar_words:
+    print(f"{word}: {score:.4f}")
+
+# Plot the word embeddings
+plt.figure(figsize=(8, 6))
+for i, word in enumerate(words):
+    plt.scatter(reduced[i, 0], reduced[i, 1])
+    plt.annotate(word, (reduced[i, 0], reduced[i, 1]))
+plt.title("PCA Visualization of Technology Word Embeddings")
+plt.xlabel("PC1")
+plt.ylabel("PC2")
+plt.grid(True)
+
+# Show the plot
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #Program 3. Train a custom Word2Vec model on a small dataset. Train embeddings on a domain 
 specific corpus (e.g., legal, medical) and analyze how embeddings capture domain-specific 
 semantics. 
